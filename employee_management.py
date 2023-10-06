@@ -71,6 +71,7 @@ session = Session()
 
 # methods to create employees
 # Function to add an employee to a department
+@classmethod
 def add_employee(first_name, last_name, position, salary, years, department_name):
     department = session.query(Department).filter_by(name=department_name).first()
     if department:
@@ -90,6 +91,7 @@ def add_employee(first_name, last_name, position, salary, years, department_name
 
 # methods to remove employees
 # Function to remove an employee by ID
+@classmethod
 def remove_employee(employee_id):
     employee = session.query(Employee).filter_by(id=employee_id).first()
     if employee:
@@ -100,6 +102,7 @@ def remove_employee(employee_id):
         print(f"Employee with ID {employee_id} not found. No action taken.")
 
 # Function to promote an employee by ID
+@classmethod
 def promote_employee(employee_id, new_position, new_salary):
     employee = session.query(Employee).filter_by(id=employee_id).first()
     if employee:
@@ -111,11 +114,14 @@ def promote_employee(employee_id, new_position, new_salary):
         print(f"Employee with ID {employee_id} not found. Promotion not applied.")
 
 # Function to display all employees
+@classmethod
 def display_employees():
     employees = session.query(Employee).all()
     for employee in employees:
         print(f"{employee.full_name()} is a {employee.position} with a salary of ${employee.salary}, {employee.years} years of experience, in the {employee.department.name} department.")
 
+for cls in [Employee, Department, employee_projects]:
+    session.query(cls).delete()
 # Add departments to the database
 department1 = Department(name='ICT')
 department2 = Department(name='Accounting')
@@ -143,6 +149,9 @@ session.add(employee1)
 session.add(employee2)
 session.add(employee3)
 session.add(employee4)
+session.add(employee5)
+session.add(employee6)
+
 session.add(project1)
 session.add(project2)
 session.add(project3)
