@@ -8,7 +8,7 @@ from sqlalchemy import func
 # Create a base class for declarative models
 Base = declarative_base()
 
-# Define the association table for the many-to-many relationship
+# Defining the association table for the many-to-many relationships
 employee_projects = Table('employee_projects', Base.metadata,
     Column('employee_id', Integer, ForeignKey('employees.id')),
     Column('project_id', Integer, ForeignKey('projects.id'))
@@ -120,8 +120,10 @@ def display_employees():
     for employee in employees:
         print(f"{employee.full_name()} is a {employee.position} with a salary of ${employee.salary}, {employee.years} years of experience, in the {employee.department.name} department.")
 
-for cls in [Employee, Department, employee_projects]:
+for cls in [Employee, Department, Project]:
     session.query(cls).delete()
+
+# Instances
 # Add departments to the database
 department1 = Department(name='ICT')
 department2 = Department(name='Accounting')
@@ -156,7 +158,7 @@ session.add(project1)
 session.add(project2)
 session.add(project3)
 
-# Assign employees to projects
+# Assigning employees to projects
 employee1.projects.append(project1)
 employee2.projects.append(project1)
 employee2.projects.append(project2)
@@ -172,28 +174,3 @@ employees = session.query(Employee).all()
 for employee in employees:
     print(f"{employee.full_name()} is a {employee.position} with a salary of ${employee.salary}, {employee.years} years of experience, in the {employee.department.name} department.")
 
-    
-# Function to remove duplicates from the Employee table
-def remove_duplicates():
-    # Query for employees with the same first_name, last_name, and department
-    duplicate_employees = session.query(Employee).join(Department).group_by(Employee.first_name, Employee.last_name, Employee.department_id).having(func.count().label('count') > 1).all()
-
-    for duplicate_employee in duplicate_employees:
-        print(f"Found duplicate employee: {duplicate_employee.full_name()} in the {duplicate_employee.department.name} department. Removing duplicates...")
-
-        # Get all duplicate entries for the employee
-        duplicate_entries = session.query(Employee).filter_by(
-            first_name=duplicate_employee.first_name,
-            last_name=duplicate_employee.last_name,
-            department_id=duplicate_employee.department_id
-        ).all()
-
-        # Keep the first occurrence of the duplicate and remove the rest
-        if len(duplicate_entries) > 1:
-            for entry in duplicate_entries[1:]:
-                session.delete(entry)
-
-    session.commit()
-
-# Call the remove_duplicates function to remove duplicates and update the database
-remove_duplicates()

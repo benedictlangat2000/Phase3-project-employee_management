@@ -1,10 +1,9 @@
 import click
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from employee_management import Employee, Department, Project, remove_duplicates
+from employee_management import Employee, Department, Project
 
-
-# database engine
+# Database engine
 engine = create_engine('sqlite:///employee_management.db')
 
 # Create a session
@@ -74,11 +73,34 @@ def display_employees():
     for employee in employees:
         click.echo(f"{employee.full_name()} is a {employee.position} with a salary of ${employee.salary}, {employee.years} years of experience, in the {employee.department.name} department.")
 
+if __name__ == "__main__":
+    cli()
 @cli.command()
-def remove_duplicates_command():
-    """Remove duplicate employees from the database"""
-    remove_duplicates()
-    click.echo("Duplicate employees removed and database updated.")
+def main_menu():
+    """Main menu for the Employee Management System"""
+    while True:
+        click.echo("\nEmployee Management System Menu:")
+        click.echo("1. Add Employee")
+        click.echo("2. Remove Employee")
+        click.echo("3. Promote Employee")
+        click.echo("4. Display Employees")
+        click.echo("5. Quit")
 
-if __name__ == '__main__':
+        choice = click.prompt("Enter your choice (1/2/3/4/5)", type=int)
+
+        if choice == 1:
+            add_employee()
+        elif choice == 2:
+            remove_employee()
+        elif choice == 3:
+            promote_employee()
+        elif choice == 4:
+            display_employees()
+        elif choice == 5:
+            click.echo("Exiting the program.")
+            break
+        else:
+            click.echo("Invalid choice. Please select a valid option.")
+
+if __name__ == "__main__":
     cli()
